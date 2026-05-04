@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>为什么你越努力，爱和钱却离你越远？</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #fff8f4;
+      --card: #ffffff;
+      --primary: #b8796b;
+      --primary-dark: #8b5046;
+      --secondary: #d9a56f;
+      --text: #30231f;
+      --muted: #7b625c;
+      --soft: #f8e8df;
+      --line: #efd4c8;
+      --shadow: 0 22px 60px rgba(78, 42, 32, 0.14);
+      --radius: 26px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, #ffe4dc 0%, transparent 30%),
+        radial-gradient(circle at bottom right, #f0ccb9 0%, transparent 36%),
+        var(--bg);
+    }
+
+    .container {
+      width: min(980px, 92%);
+      margin: 0 auto;
+      padding: 42px 0;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 16px 0 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--soft);
+      color: var(--primary-dark);
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 auto 18px;
+      max-width: 880px;
+      font-size: clamp(32px, 6vw, 58px);
+      line-height: 1.08;
+      letter-spacing: -1px;
+    }
+
+    .subtitle {
+      margin: 0 auto;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: clamp(17px, 2.4vw, 22px);
+      line-height: 1.75;
+    }
+
+    .card {
+      margin-top: 30px;
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(184,121,107,.16);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: clamp(24px, 4vw, 44px);
+      backdrop-filter: blur(12px);
+    }
+
+    .section { display: none; animation: fade .25s ease; }
+    .section.active { display: block; }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      font-size: clamp(26px, 4vw, 40px);
+      line-height: 1.25;
+      margin: 0 0 16px;
+    }
+
+    h3 {
+      font-size: 22px;
+      margin: 26px 0 12px;
+    }
+
+    p, li {
+      font-size: 17px;
+      line-height: 1.8;
+    }
+
+    .muted { color: var(--muted); }
+
+    .pain-list {
+      display: grid;
+      gap: 12px;
+      margin: 24px 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .pain-list li {
+      background: #fffaf7;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px 18px;
+    }
+
+    .truth-box {
+      margin-top: 24px;
+      padding: 24px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #fff4ed, #f8e2d9);
+      border: 1px solid var(--line);
+    }
+
+    .truth-box strong {
+      color: var(--primary-dark);
+      font-size: 20px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+
+    button, .button-link {
+      border: 0;
+      border-radius: 16px;
+      padding: 15px 22px;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: .2s ease;
+    }
+
+    .primary {
+      background: var(--primary);
+      color: white;
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .primary:hover { background: var(--primary-dark); }
+
+    .secondary {
+      background: var(--soft);
+      color: var(--primary-dark);
+    }
+
+    button:disabled {
+      opacity: .48;
+      cursor: not-allowed;
+    }
+
+    .progress-wrap { margin-bottom: 28px; }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .progress {
+      height: 10px;
+      background: #f2ddd3;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transition: width .25s ease;
+    }
+
+    .question { display: none; }
+    .question.active { display: block; }
+
+    .question-title {
+      font-size: clamp(25px, 4vw, 36px);
+      font-weight: 900;
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+
+    .options {
+      display: grid;
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .option {
+      width: 100%;
+      text-align: left;
+      background: #fffdfb;
+      color: var(--text);
+      border: 1.5px solid var(--line);
+      border-radius: 18px;
+      padding: 18px 20px;
+      font-size: 17px;
+      line-height: 1.55;
+      font-weight: 650;
+    }
+
+    .option:hover {
+      border-color: var(--primary);
+      box-shadow: 0 12px 24px rgba(78,42,32,.08);
+      transform: translateY(-2px);
+    }
+
+    .option.selected {
+      background: #f8e5dd;
+      border-color: var(--primary);
+      color: var(--primary-dark);
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    label {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    input {
+      width: 100%;
+      margin-top: 8px;
+      padding: 15px 16px;
+      border-radius: 14px;
+      border: 1.5px solid var(--line);
+      background: #fffdfb;
+      outline: none;
+      font-size: 16px;
+    }
+
+    input:focus { border-color: var(--primary); }
+
+    .privacy {
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+
+    .result-box {
+      background: #fff9f5;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 24px;
+      margin-top: 22px;
+    }
+
+    .result-title {
+      color: var(--primary-dark);
+      font-size: clamp(27px, 4vw, 42px);
+      line-height: 1.2;
+      margin: 0 0 14px;
+    }
+
+    .highlight {
+      background: #fff0e8;
+      border-left: 5px solid var(--primary);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin: 18px 0;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+
+    .cta-box {
+      margin-top: 24px;
+      padding: 26px;
+      border-radius: 24px;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+
+    .cta-box h3 { margin-top: 0; font-size: 26px; }
+    .cta-box p { color: white; }
+
+    .whatsapp { background: #25D366; color: white; }
+    .whatsapp:hover { filter: brightness(.95); }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      margin-top: 22px;
+      font-size: 13px;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 640px) {
+      .container { padding: 26px 0; }
+      .btn-row { flex-direction: column; }
+      button, .button-link { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <div class="badge">Divine Magical Hut 免费能量测试</div>
+      <h1>为什么你越努力，爱和钱却离你越远？</h1>
+      <p class="subtitle">你不是不够好，你只是一直在重复一个你看不见的情绪与能量模式。</p>
+    </section>
+
+    <section class="card">
+      <div class="section active" id="introSection">
+        <h2>你有没有一种感觉：明明很努力，却还是卡住？</h2>
+        <ul class="pain-list">
+          <li>在关系里，你付出很多，但最后还是失望。</li>
+          <li>在赚钱上，你很认真，但钱总是留不住。</li>
+          <li>在人生方向上，你一直想改变，但内心还是很迷茫。</li>
+        </ul>
+        <p class="muted">最难受的是，你开始怀疑自己是不是哪里出了问题。可是你又说不出来，到底为什么会这样。</p>
+        <div class="truth-box">
+          <strong>真相是：你不是卡住，你是在重复一个“熟悉的痛苦模式”。</strong>
+          <p>这个测试会帮你看见：你真正卡住的不是表面问题，而是你内在反复运作的情绪模式。</p>
+        </div>
+        <div class="btn-row">
+          <button class="primary" id="startBtn" type="button">开始3分钟测试</button>
+        </div>
+      </div>
+
+      <div class="section" id="quizSection">
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span id="stepText">第 1 / 5 题</span>
+            <span id="progressText">0%</span>
+          </div>
+          <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+        </div>
+
+        <div id="questions"></div>
+
+        <div class="btn-row">
+          <button class="secondary" id="prevBtn" type="button">上一题</button>
+          <button class="primary" id="nextBtn" type="button" disabled>下一题</button>
+        </div>
+      </div>
+
+      <form class="section" id="leadForm">
+        <h2>你的结果已经出来了 ✨</h2>
+        <p class="muted">填写资料后，你会马上看到你的专属能量报告，并可以下载 PDF。</p>
+        <div class="form-grid">
+          <label>名字
+            <input type="text" id="name" name="name" placeholder="请输入你的名字" required />
+          </label>
+          <label>Email
+            <input type="email" id="email" name="email" placeholder="请输入你的 Email" required />
+          </label>
+          <label>电话 / WhatsApp
+            <input type="tel" id="phone" name="phone" placeholder="请输入你的电话号码" required />
+          </label>
+        </div>
+        <p class="privacy">你的资料只用于发送测试结果与后续能量诊断联系。你可以把代码里的 WEBHOOK_URL 换成 Google Sheet / Zapier / Make 链接来自动收集资料。</p>
+        <div class="btn-row">
+          <button class="secondary" type="button" id="backToQuizBtn">返回修改答案</button>
+          <button class="primary" type="submit">查看我的专属结果</button>
+        </div>
+      </form>
+
+      <div class="section" id="resultSection">
+        <h2>你的专属能量报告</h2>
+        <div class="result-box">
+          <h3 class="result-title" id="resultTitle"></h3>
+          <p id="resultSummary"></p>
+          <div class="highlight" id="coreTruth"></div>
+
+          <h3>你真正卡住的地方</h3>
+          <ul id="resultBlocks"></ul>
+
+          <h3>如果不改变，可能会继续发生</h3>
+          <ul id="resultRisks"></ul>
+
+          <h3>你现在需要的不是更努力，而是：</h3>
+          <ul id="resultActions"></ul>
+        </div>
+
+        <div class="cta-box">
+          <h3>如果你看到这里，心里有一句：“这真的很像我”</h3>
+          <p>我现在开放少量【1对1能量诊断】，可以帮你更深入看见：</p>
+          <ul>
+            <li>你为什么会一直重复这个模式</li>
+            <li>你的情感 / 金钱真正阻塞点在哪里</li>
+            <li>你接下来应该先改变哪一步</li>
+          </ul>
+          <div class="btn-row">
+            <a class="button-link whatsapp" id="whatsappBtn" href="#" target="_blank" rel="noopener">预约1对1能量诊断</a>
+            <button class="secondary" type="button" id="downloadPdfBtn">下载 PDF 报告</button>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="secondary" type="button" id="restartBtn">重新测试</button>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer-note">© Divine Magical Hut | Emotional healing meets spiritual empowerment.</p>
+  </main>
+
+  <script>
+    // 1）把你的 WhatsApp 电话号码放这里：国家码 + 电话号码，不要 + 号，不要空格。
+    // 例：马来西亚号码 60123456789
+    const WHATSAPP_NUMBER = "601154498768";
+
+    // 2）如果你要自动收集资料到 Google Sheet / Zapier / Make，填 webhook 链接。
+    // 没有 webhook 也可以正常显示结果与下载 PDF。
+    const WEBHOOK_URL = "";
+
+    const questions = [
+      {
+        title: "在关系里，你最常的状态是：",
+        hint: "选择最接近你真实感受的答案。",
+        options: [
+          { text: "我总是付出更多，但最后还是觉得不被珍惜", type: "giver" },
+          { text: "我不太敢表达真实感受，怕破坏关系", type: "suppressed" },
+          { text: "我很怕失去对方，所以容易焦虑和不安", type: "scarcity" }
+        ]
+      },
+      {
+        title: "关于钱，你更接近哪种感觉：",
+        hint: "不要用理性回答，用第一直觉。",
+        options: [
+          { text: "我要很努力，才觉得自己配拥有更多", type: "giver" },
+          { text: "钱总是不稳定，我很难真正安心", type: "scarcity" },
+          { text: "我好像抓不住钱，也不太敢要更多", type: "suppressed" }
+        ]
+      },
+      {
+        title: "当你一个人时，你最真实的状态是：",
+        hint: "这题会暴露你的内在能量模式。",
+        options: [
+          { text: "很累，但不能停，停下来就觉得自己没价值", type: "giver" },
+          { text: "有很多情绪，但说不出口，只能自己消化", type: "suppressed" },
+          { text: "很焦虑未来，担心钱、关系和人生方向", type: "scarcity" }
+        ]
+      },
+      {
+        title: "当事情不顺时，你通常会：",
+        hint: "你最自然的反应，就是你最熟悉的旧模式。",
+        options: [
+          { text: "更努力、更付出，希望事情变好", type: "giver" },
+          { text: "更压抑，告诉自己没事，不要想太多", type: "suppressed" },
+          { text: "更焦虑，一直想最坏的结果", type: "scarcity" }
+        ]
+      },
+      {
+        title: "如果现在只能改变一件事，你最想改变的是：",
+        hint: "这个答案会帮助我知道你最想被支持的方向。",
+        options: [
+          { text: "感情：停止重复受伤关系", type: "love" },
+          { text: "金钱：开始吸引稳定财富", type: "money" },
+          { text: "人生方向：找回清晰感和力量", type: "direction" }
+        ]
+      }
+    ];
+
+    const results = {
+      giver: {
+        title: "💔 过度付出型：你习惯用付出来证明自己的价值",
+        summary: "你很有爱，也很会照顾别人。可是你的深层模式可能是：只要我付出更多，我就会被爱、被看见、被留下。所以你容易吸引需要你，却不一定珍惜你的人。",
+        truth: "你把“被需要”误以为是“被爱”。",
+        blocks: [
+          "你很容易先照顾别人，再考虑自己。",
+          "你害怕拒绝，因为拒绝好像等于失去关系。",
+          "你明明很累，却还是习惯说：没关系，我可以。"
+        ],
+        risks: [
+          "你会继续遇到类似的人：需要你，却没有真正珍惜你。",
+          "你会越来越累，甚至开始怀疑自己是不是不值得被爱。",
+          "你的钱也容易因为过度付出、讨好或不好意思收费而流失。"
+        ],
+        actions: [
+          "看清楚你在哪些关系里一直过度付出。",
+          "练习把自己的需求放回第一位。",
+          "重新建立：我不需要牺牲自己，也值得被爱。"
+        ]
+      },
+      suppressed: {
+        title: "🌫 压抑情绪型：你看起来很稳定，但一直在隐藏真实自己",
+        summary: "你很懂事，也很能忍。你常常为了维持关系、维持体面、维持和平，把真实感受收起来。但被压住的情绪不会消失，它会变成疲惫、距离感和内在空洞。",
+        truth: "你害怕真实的自己不被接受。",
+        blocks: [
+          "你常常说没事，但其实心里很有事。",
+          "你不习惯表达需求，因为害怕别人觉得你麻烦。",
+          "你很少真正放松，因为你一直在控制自己的情绪。"
+        ],
+        risks: [
+          "你会越来越孤独，因为没有人真正知道你怎么了。",
+          "关系会越来越浅，因为你的真实感受没有被看见。",
+          "金钱和机会也会被影响，因为你不太敢表达、要求或争取。"
+        ],
+        actions: [
+          "先允许自己承认：我其实没有那么没事。",
+          "练习说出一个真实感受，而不是马上压下去。",
+          "重新建立：我的感受是安全的，我可以被听见。"
+        ]
+      },
+      scarcity: {
+        title: "💸 匮乏焦虑型：你内在一直缺乏安全感",
+        summary: "你很想变好，也很想拥有稳定的爱和钱。但你的内在常常在担心：会不会不够？会不会失去？会不会失败？这种焦虑会让你很难真正放松接收，也容易错过机会。",
+        truth: "你不是没有能力，而是你的内在一直觉得“不安全”。",
+        blocks: [
+          "你常常担心未来，所以很难享受现在。",
+          "你想要更多，但内心又怀疑自己配不配。",
+          "机会来了，你会犹豫；错过后，又责备自己。"
+        ],
+        risks: [
+          "你会一直在焦虑里做决定，而不是在信任里选择。",
+          "你可能会吸引忽冷忽热的关系，因为这符合你熟悉的不安全感。",
+          "金钱会变得很难稳定，因为你一边想要，一边害怕拥有。"
+        ],
+        actions: [
+          "先看见你的焦虑不是事实，而是旧模式。",
+          "练习建立内在安全感，而不是只靠外在结果安心。",
+          "重新建立：我可以稳定接收爱、钱和机会。"
+        ]
+      }
+    };
+
+    const desireCopy = {
+      love: "你现在最想改变的是感情模式：停止重复受伤关系，开始吸引真正珍惜你的人。",
+      money: "你现在最想改变的是金钱模式：停止对钱焦虑，开始建立稳定接收财富的能量。",
+      direction: "你现在最想改变的是人生方向：停止迷茫和内耗，重新找回清晰感与行动力。"
+    };
+
+    let currentIndex = 0;
+    const answers = new Array(questions.length).fill(null);
+
+    const introSection = document.getElementById("introSection");
+    const quizSection = document.getElementById("quizSection");
+    const leadForm = document.getElementById("leadForm");
+    const resultSection = document.getElementById("resultSection");
+    const questionsEl = document.getElementById("questions");
+    const stepText = document.getElementById("stepText");
+    const progressText = document.getElementById("progressText");
+    const progressBar = document.getElementById("progressBar");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    function showOnly(section) {
+      [introSection, quizSection, leadForm, resultSection].forEach(s => s.classList.remove("active"));
+      section.classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderQuestions() {
+      questionsEl.innerHTML = questions.map((q, qIndex) => `
+        <div class="question ${qIndex === 0 ? "active" : ""}" data-index="${qIndex}">
+          <div class="question-title">${q.title}</div>
+          <p class="muted">${q.hint}</p>
+          <div class="options">
+            ${q.options.map((opt, optIndex) => `
+              <button class="option" type="button" data-q="${qIndex}" data-type="${opt.type}" data-opt="${optIndex}">
+                ${String.fromCharCode(65 + optIndex)}. ${opt.text}
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      `).join("");
+
+      document.querySelectorAll(".option").forEach(btn => {
+        btn.addEventListener("click", () => selectOption(btn));
+      });
+    }
+
+    function selectOption(btn) {
+      const qIndex = Number(btn.dataset.q);
+      answers[qIndex] = btn.dataset.type;
+      document.querySelectorAll(`.option[data-q="${qIndex}"]`).forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      updateQuizUI();
+    }
+
+    function updateQuizUI() {
+      document.querySelectorAll(".question").forEach((q, idx) => {
+        q.classList.toggle("active", idx === currentIndex);
+      });
+      const answeredCount = answers.filter(Boolean).length;
+      const percent = Math.round((answeredCount / questions.length) * 100);
+      stepText.textContent = `第 ${currentIndex + 1} / ${questions.length} 题`;
+      progressText.textContent = `${percent}%`;
+      progressBar.style.width = `${percent}%`;
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = !answers[currentIndex];
+      nextBtn.textContent = currentIndex === questions.length - 1 ? "查看结果" : "下一题";
+    }
+
+    function calculateResultType() {
+      const score = { giver: 0, suppressed: 0, scarcity: 0 };
+      answers.slice(0, 4).forEach(type => score[type]++);
+      return Object.entries(score).sort((a, b) => b[1] - a[1])[0][0];
+    }
+
+    function populateResult(resultType, desireType) {
+      const r = results[resultType];
+      document.getElementById("resultTitle").textContent = r.title;
+      document.getElementById("resultSummary").textContent = r.summary;
+      document.getElementById("coreTruth").textContent = r.truth + " " + (desireCopy[desireType] || "");
+      document.getElementById("resultBlocks").innerHTML = r.blocks.map(item => `<li>${item}</li>`).join("");
+      document.getElementById("resultRisks").innerHTML = r.risks.map(item => `<li>${item}</li>`).join("");
+      document.getElementById("resultActions").innerHTML = r.actions.map(item => `<li>${item}</li>`).join("");
+
+      const name = document.getElementById("name").value.trim() || "我";
+      const message = `你好 Mica，我刚刚完成了能量测试。我的结果是：${r.title}。我想预约1对1能量诊断，想更深入看我的情感/金钱/人生方向卡点。我的名字是：${name}`;
+      document.getElementById("whatsappBtn").href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    }
+
+    async function submitLead(payload) {
+      if (!WEBHOOK_URL) return;
+      try {
+        await fetch(WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+      } catch (error) {
+        console.log("Lead submit skipped or failed:", error);
+      }
+    }
+
+    function showResult() {
+      const resultType = calculateResultType();
+      const desireType = answers[4];
+      const payload = {
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        resultType,
+        resultTitle: results[resultType].title,
+        desireType,
+        desire: desireCopy[desireType] || "",
+        answers,
+        createdAt: new Date().toISOString(),
+        source: "Divine Magical Hut Lead Magnet Quiz"
+      };
+      localStorage.setItem("dmh_lead_result", JSON.stringify(payload));
+      submitLead(payload);
+      populateResult(resultType, desireType);
+      showOnly(resultSection);
+    }
+
+    function downloadPDF() {
+      const stored = JSON.parse(localStorage.getItem("dmh_lead_result") || "{}");
+      const resultType = stored.resultType || calculateResultType();
+      const desireType = stored.desireType || answers[4];
+      const r = results[resultType];
+      const name = stored.name || document.getElementById("name").value.trim() || "你";
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: "mm", format: "a4" });
+
+      // 说明：jsPDF 默认中文字体有限。如果中文 PDF 显示不完整，可接入中文字体。
+      // 网页结果是完整中文；PDF 使用英文兼容版，确保可下载。
+      const english = {
+        giver: {
+          title: "Over-Giving Type: You prove your worth through giving.",
+          summary: "You are loving and caring, but you may over-give to feel loved, seen, or chosen.",
+          truth: "You may confuse being needed with being loved.",
+          blocks: ["You put others before yourself.", "You fear saying no.", "You hide your needs even when tired."],
+          risks: ["You may attract people who need you but do not cherish you.", "You may feel emotionally drained.", "You may undercharge, over-help, or lose money through people-pleasing."],
+          actions: ["Notice where you over-give.", "Put your needs back into the center.", "Rebuild the belief: I am worthy without self-sacrifice."]
+        },
+        suppressed: {
+          title: "Suppressed Emotion Type: You hide your real self.",
+          summary: "You look stable, but you may hold many emotions inside to keep peace and avoid judgment.",
+          truth: "You may fear that your real self will not be accepted.",
+          blocks: ["You say you are fine when you are not.", "You avoid expressing your needs.", "You control your emotions too much."],
+          risks: ["You may feel lonely even around people.", "Relationships may stay shallow.", "You may miss chances because you do not express or ask."],
+          actions: ["Admit what you truly feel.", "Speak one honest sentence today.", "Rebuild the belief: My feelings are safe and can be heard."]
+        },
+        scarcity: {
+          title: "Scarcity Anxiety Type: You lack inner safety.",
+          summary: "You want love, money, and stability, but inner fear may block your ability to receive.",
+          truth: "You are not incapable. Your nervous system may not feel safe receiving more.",
+          blocks: ["You worry about the future.", "You question whether you deserve more.", "You hesitate when opportunities appear."],
+          risks: ["You may decide from fear, not trust.", "You may attract unstable relationships.", "Money may feel unstable because you want it and fear it at the same time."],
+          actions: ["See anxiety as an old pattern, not truth.", "Build inner safety before chasing external proof.", "Rebuild the belief: I can receive love, money, and opportunities steadily."]
+        }
+      };
+      const e = english[resultType];
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(18);
+      doc.text("Divine Magical Hut Energy Report", 20, 22);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      doc.text(`Name: ${name}`, 20, 34);
+      doc.text(`Email: ${stored.email || ""}`, 20, 42);
+      doc.text(`Phone: ${stored.phone || ""}`, 20, 50);
+
+      let y = 66;
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(15);
+      doc.text("Your Result", 20, y);
+      y += 10;
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.text(doc.splitTextToSize(e.title, 170), 20, y);
+      y += 14;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      doc.text(doc.splitTextToSize(e.summary, 170), 20, y);
+      y += 20;
+      doc.text(doc.splitTextToSize(e.truth, 170), 20, y);
+      y += 18;
+
+      function addSection(title, items) {
+        doc.setFont("helvetica", "bold");
+        doc.text(title, 20, y);
+        y += 8;
+        doc.setFont("helvetica", "normal");
+        items.forEach(item => {
+          const lines = doc.splitTextToSize(`- ${item}`, 164);
+          doc.text(lines, 24, y);
+          y += lines.length * 6 + 2;
+        });
+        y += 5;
+      }
+
+      addSection("Hidden Blocks", e.blocks);
+      addSection("If Nothing Changes", e.risks);
+      addSection("Your First Healing Direction", e.actions);
+
+      doc.setFont("helvetica", "bold");
+      doc.text("Next Step", 20, y);
+      y += 8;
+      doc.setFont("helvetica", "normal");
+      doc.text(doc.splitTextToSize("If this result feels like you, book a 1:1 energy diagnosis with Mica to uncover your deeper love, money, and life-direction blocks.", 170), 20, y);
+
+      doc.save(`Divine-Magical-Hut-Energy-Report-${name}.pdf`);
+    }
+
+    document.getElementById("startBtn").addEventListener("click", () => showOnly(quizSection));
+
+    prevBtn.addEventListener("click", () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateQuizUI();
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (!answers[currentIndex]) return;
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        updateQuizUI();
+      } else {
+        showOnly(leadForm);
+      }
+    });
+
+    document.getElementById("backToQuizBtn").addEventListener("click", () => showOnly(quizSection));
+
+    leadForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      showResult();
+    });
+
+    document.getElementById("downloadPdfBtn").addEventListener("click", downloadPDF);
+
+    document.getElementById("restartBtn").addEventListener("click", () => {
+      currentIndex = 0;
+      answers.fill(null);
+      localStorage.removeItem("dmh_lead_result");
+      document.querySelectorAll(".option").forEach(btn => btn.classList.remove("selected"));
+      updateQuizUI();
+      showOnly(introSection);
+    });
+
+    renderQuestions();
+    updateQuizUI();
+  </script>
+</body>
+</html>
